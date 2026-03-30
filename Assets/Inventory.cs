@@ -14,6 +14,8 @@ public class Inventory : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.I))
         {
+            Debug.Log("=== INVENTAIRE ===");
+
             foreach (string item in items)
             {
                 Debug.Log(item);

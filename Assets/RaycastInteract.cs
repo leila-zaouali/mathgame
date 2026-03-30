@@ -3,6 +3,7 @@ using UnityEngine;
 public class RaycastInteract : MonoBehaviour
 {
     public float distance = 5f;
+    public GameObject player;
 
     void Update()
     {
@@ -11,19 +12,16 @@ public class RaycastInteract : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, distance))
         {
-            Debug.Log("Touché : " + hit.collider.name);
-
             if (hit.collider.CompareTag("Collectible"))
             {
-                Debug.Log("C'est collectible");
-
                 if (Input.GetKeyDown(KeyCode.E))
                 {
-                    PickupItem item = hit.collider.GetComponent<PickupItem>();
+                    Inventory inv = player.GetComponent<Inventory>();
 
-                    if (item != null)
+                    if (inv != null)
                     {
-                        item.PickUp(GameObject.FindGameObjectWithTag("Player"));
+                        inv.AddItem(hit.collider.gameObject.name);
+                        Destroy(hit.collider.gameObject);
                     }
                 }
             }
