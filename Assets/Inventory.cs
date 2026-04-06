@@ -10,14 +10,4 @@ public class Inventory : MonoBehaviour
         items.Add(itemName);
         Debug.Log("Objet ajouté : " + itemName);
     }
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            foreach (string item in items)
-            {
-                Debug.Log(item);
-            }
-        }
-    }
 }
