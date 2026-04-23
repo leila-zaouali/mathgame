@@ -4550,7 +4550,7 @@ GameObject:
   - component: {fileID: 773006569955696553}
   - component: {fileID: 2090803680957363634}
   m_Layer: 0
-  m_Name: t.0625
+  m_Name: oxgen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7427,7 +7427,7 @@ GameObject:
   - component: {fileID: 448888327116641200}
   - component: {fileID: 5006458227062756290}
   m_Layer: 0
-  m_Name: t.0626
+  m_Name: argon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17651,7 +17651,7 @@ GameObject:
   - component: {fileID: 5724295605687350791}
   - component: {fileID: 3353251056255598871}
   m_Layer: 0
-  m_Name: t.0624
+  m_Name: nitrogen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
