@@ -3,19 +3,33 @@ using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
-    public List<string> items = new List<string>();
+    public static Inventory instance;
 
-    public int h2oCount = 0; // 👈 compteur H2O
+    public List<Sprite> items = new List<Sprite>();
 
-    public void AddItem(string itemName)
+    public int h2oCount = 0;
+
+    void Awake()
     {
-        items.Add(itemName);
+        if (instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+
+    public void AddItem(string itemName, Sprite icon)
+    {
+        items.Add(icon);
 
         if (itemName == "H2O")
         {
             h2oCount++;
         }
 
-        Debug.Log("Ajouté : " + itemName + " | H2O = " + h2oCount);
+        Debug.Log("Ajouté : " + itemName);
     }
 }

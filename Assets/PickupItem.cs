@@ -2,20 +2,11 @@ using UnityEngine;
 
 public class PickupItem : MonoBehaviour
 {
-    public string itemName;
+    public ItemData data;
 
-    public void PickUp(GameObject player)
+    public void PickUp()
     {
-        Inventory inv = player.GetComponent<Inventory>();
-
-        if (inv != null)
-        {
-            inv.AddItem(itemName);
-            Destroy(gameObject);
-        }
-        else
-        {
-            Debug.Log("Inventory script manquant sur le Player !");
-        }
+        Inventory.instance.AddItem(data.itemName, data.icon);
+        Destroy(gameObject);
     }
 }
