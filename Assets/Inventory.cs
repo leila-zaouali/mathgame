@@ -32,4 +32,5 @@ public class Inventory : MonoBehaviour
 
         Debug.Log("Ajouté : " + itemName);
     }
+
 }
