@@ -70,4 +70,4 @@ sysinfo.txt
 # Assets/        ❌ must be tracked
 # ProjectSettings/ ❌ must be tracked
 # Packages/      ❌ must be tracked
-# *.meta         ❌ must NEVER be ignored
+# *.meta         ❌ must NEVER be ignored 
