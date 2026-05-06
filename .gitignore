@@ -1,0 +1,73 @@
+# =========================
+# Unity generated folders
+# =========================
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+
+# =========================
+# Memory / recordings
+# =========================
+[Mm]emoryCaptures/
+[Rr]ecordings/
+
+# =========================
+# Visual Studio / Rider / IDE
+# =========================
+.vs/
+.gradle/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+.consulo/
+ExportedObj/
+
+# JetBrains Rider
+[Aa]ssets/Plugins/Editor/JetBrains*
+
+# =========================
+# OS generated files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Unity crash / logs
+# =========================
+sysinfo.txt
+
+# =========================
+# Builds
+# =========================
+*.apk
+*.aab
+*.unitypackage
+*.app
+
+# =========================
+# Addressables (optional cache)
+# =========================
+[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
+
+# =========================
+# IMPORTANT: DO NOT IGNORE THESE
+# =========================
+# Assets/        ❌ must be tracked
+# ProjectSettings/ ❌ must be tracked
+# Packages/      ❌ must be tracked
+# *.meta         ❌ must NEVER be ignored 
