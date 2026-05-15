@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class InventoryUI : MonoBehaviour
@@ -6,39 +6,36 @@ public class InventoryUI : MonoBehaviour
     public GameObject slotPrefab;
     public Transform parent;
 
-    void Start()
+    void OnEnable()
     {
         RefreshUI();
     }
 
     public void RefreshUI()
     {
-        if (Inventory.instance == null)
-        {
-            Debug.LogError("Inventory.instance est NULL !");
-            return;
-        }
-
-        if (parent == null)
-        {
-            Debug.LogError("Parent UI NON assign� !");
-            return;
-        }
+        if (Inventory.instance == null) return;
 
         foreach (Transform child in parent)
         {
             Destroy(child.gameObject);
         }
 
-        foreach (Sprite item in Inventory.instance.items)
+        // 💧 afficher les gouttes
+        for (int i = 0; i < Inventory.instance.waterDropCount; i++)
         {
-            GameObject slot = Instantiate(slotPrefab, parent);
-
-            Image img = slot.GetComponent<Image>();
-            if (img != null)
-            {
-                img.sprite = item;
-            }
+            CreateSlot(Inventory.instance.waterDropIcon);
         }
+
+        // 🧪 afficher H2O restants
+        for (int i = 0; i < Inventory.instance.h2oCount; i++)
+        {
+            CreateSlot(Inventory.instance.h2oIcon);
+        }
+    }
+
+    void CreateSlot(Sprite icon)
+    {
+        GameObject slot = Instantiate(slotPrefab, parent);
+        slot.GetComponent<Image>().sprite = icon;
     }
 }
