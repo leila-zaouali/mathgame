@@ -3,6 +3,7 @@
 public class ItemInHand : MonoBehaviour
 {
     public Transform handPoint;
+    public Transform headPoint;
 
     private GameObject currentObject;
     private InventoryItem currentItem;
@@ -11,38 +12,58 @@ public class ItemInHand : MonoBehaviour
     {
         if (GameInput.instance.UsePressed())
         {
+            // 🔥 PRENDRE OBJET
             if (currentObject == null)
             {
-                // 🔥 EQUIPER
                 InventoryItem item = InventorySelector.instance.selectedItem;
 
-                if (item == null || item.prefab == null) return;
-
-                item.isEquipped = true;
+                if (item == null) return;
+                if (item.prefab == null) return;
 
                 currentItem = item;
 
-                currentObject = Instantiate(item.prefab, handPoint.position, handPoint.rotation);
-                currentObject.transform.SetParent(handPoint);
+                // 🔦 TORCHE → TÊTE
+                if (item.itemName == "Torch")
+                {
+                    currentObject = Instantiate(
+                        item.prefab,
+                        headPoint.position,
+                        headPoint.rotation
+                    );
 
-                InventoryUIRefresh();
+                    currentObject.transform.SetParent(headPoint);
+                }
+                // ✋ AUTRES OBJETS → MAIN
+                else
+                {
+                    currentObject = Instantiate(
+                        item.prefab,
+                        handPoint.position,
+                        handPoint.rotation
+                    );
+
+                    currentObject.transform.SetParent(handPoint);
+                }
+
+                currentObject.transform.localPosition = Vector3.zero;
+                currentObject.transform.localRotation = Quaternion.identity;
+
+                item.isEquipped = true;
+
+                FindObjectOfType<InventoryUI>().RefreshUI();
             }
+            // 🔥 REMETTRE OBJET
             else
             {
-                // 🔥 REPOSER
                 currentItem.isEquipped = false;
 
                 Destroy(currentObject);
+
                 currentObject = null;
                 currentItem = null;
 
-                InventoryUIRefresh();
+                FindObjectOfType<InventoryUI>().RefreshUI();
             }
         }
-    }
-
-    void InventoryUIRefresh()
-    {
-        FindObjectOfType<InventoryUI>().RefreshUI();
     }
 }
