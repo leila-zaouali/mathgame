@@ -44,7 +44,6 @@ GameObject:
   - component: {fileID: 254217802975199880}
   - component: {fileID: 8947222638449899923}
   - component: {fileID: 7625632726838333856}
-  - component: {fileID: 2708886244623265711}
   m_Layer: 0
   m_Name: defaultMaterial
   m_TagString: Voltmeter
@@ -141,20 +140,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: -0.019, y: 0.0079995785, z: 0.00907976}
   m_Center: {x: -0.0000000018626451, y: 0, z: 0}
---- !u!114 &2708886244623265711
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6022092995748996210}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba6d175dd76157e4ebe124b75fdbd12a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  batterySlot: {fileID: 0}
-  voltageText: {fileID: 0}
 --- !u!1 &6181069797655797705
 GameObject:
   m_ObjectHideFlags: 0

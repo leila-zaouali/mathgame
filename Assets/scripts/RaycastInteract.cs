@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
+using static UnityEngine.InputSystem.Controls.AxisControl;
 
 public class RaycastInteract : MonoBehaviour
 {
     public float distance = 5f;
     public LayerMask interactLayer;
+
+    public Transform handPoint;
 
     public GameObject hiddenKey;
     public GameObject floorBlock;
@@ -21,8 +24,6 @@ public class RaycastInteract : MonoBehaviour
         if (!Physics.Raycast(ray, out hit, distance, interactLayer))
             return;
 
-        Debug.Log("HIT : " + hit.collider.name);
-
         HandleInteraction(hit);
     }
 
@@ -30,9 +31,7 @@ public class RaycastInteract : MonoBehaviour
     {
         if (GameInput.instance == null) return;
 
-        // ==================================================
-        // 🧪 COLLECTIBLES
-        // ==================================================
+        // ===================== COLLECTIBLE =====================
         if (hit.collider.CompareTag("Collectible") &&
             GameInput.instance.InteractPressed())
         {
@@ -44,24 +43,65 @@ public class RaycastInteract : MonoBehaviour
             {
                 Inventory.instance.AddItem(data.itemName, data.icon, data.prefab);
                 Destroy(root.gameObject);
-                Debug.Log("✔ Ramassé : " + data.itemName);
             }
 
             return;
         }
+        if (hit.collider.GetComponentInParent<battreieslot>() &&
+      GameInput.instance.InteractPressed())
+        {
+            battreieslot slot =
+                hit.collider.GetComponentInParent<battreieslot>();
 
-        // ==================================================
-        // 🔋 BATTERIE
-        // ==================================================
+            // 👉 si j’ai une batterie en main → je la mets dans slot
+            if (currentBattery != null)
+            {
+                slot.InsertBattery(currentBattery.gameObject);
+                currentBattery = null;
+            }
+            // 👉 sinon je reprends la batterie du slot
+            else
+            {
+                GameObject batteryObj = slot.RemoveBattery();
+
+                if (batteryObj != null)
+                {
+                    currentBattery = batteryObj.GetComponent<BatteryItem>();
+
+                    Rigidbody rb = batteryObj.GetComponent<Rigidbody>();
+                    if (rb != null)
+                    {
+                        rb.isKinematic = true;
+                        rb.linearVelocity = Vector3.zero;
+                        rb.angularVelocity = Vector3.zero;
+                    }
+
+                    batteryObj.transform.SetParent(handPoint);
+                    batteryObj.transform.localPosition = Vector3.zero;
+                    batteryObj.transform.localRotation = Quaternion.identity;
+                }
+            }
+
+            return;
+        }
+        // ===================== BATTERY =====================
         if (hit.collider.CompareTag("Battery") &&
             GameInput.instance.InteractPressed())
         {
-            BatteryItem newBattery =
-                hit.collider.GetComponentInParent<BatteryItem>();
+            Voltmeter vm = Object.FindFirstObjectByType<Voltmeter>();
 
+            if (vm != null && vm.HasBattery())
+            {
+                Debug.Log("⚠ Voltmètre occupé");
+                return;
+            }
+
+            BatteryItem newBattery = hit.collider.GetComponentInParent<BatteryItem>();
             if (newBattery == null) return;
 
-            if (currentBattery != null && currentBattery != newBattery)
+            if (newBattery.isInUse) return;
+
+            if (currentBattery != null)
                 currentBattery.ResetPosition();
 
             currentBattery = newBattery;
@@ -70,35 +110,52 @@ public class RaycastInteract : MonoBehaviour
             if (rb != null)
                 rb.isKinematic = true;
 
-            Debug.Log("🔋 Batterie sélectionnée : " + currentBattery.name);
+            currentBattery.transform.SetParent(handPoint);
+            currentBattery.transform.localPosition = Vector3.zero;
+            currentBattery.transform.localRotation = Quaternion.identity;
 
             return;
         }
 
-        // ==================================================
-        // ⚡ VOLTMÈTRE
-        // ==================================================
+        // ===================== VOLTMETER =====================
         if (hit.collider.CompareTag("Voltmeter") &&
             GameInput.instance.InteractPressed())
         {
-            if (currentBattery == null) return;
-
             Voltmeter vm = hit.collider.GetComponent<Voltmeter>();
 
-            if (vm != null)
+            if (vm == null) return;
+
+            if (currentBattery != null)
             {
                 vm.InsertBattery(currentBattery.gameObject);
                 currentBattery = null;
+            }
+            else
+            {
+                GameObject batteryObj = vm.RemoveBattery();
 
-                Debug.Log("⚡ Batterie insérée");
+                if (batteryObj != null)
+                {
+                    currentBattery = batteryObj.GetComponent<BatteryItem>();
+
+                    Rigidbody rb = batteryObj.GetComponent<Rigidbody>();
+                    if (rb != null)
+                    {
+                        rb.isKinematic = false;
+                        rb.linearVelocity = Vector3.zero;
+                        rb.angularVelocity = Vector3.zero;
+                    }
+
+                    batteryObj.transform.SetParent(handPoint);
+                    batteryObj.transform.localPosition = Vector3.zero;
+                    batteryObj.transform.localRotation = Quaternion.identity;
+                }
             }
 
             return;
         }
 
-        // ==================================================
-        // 📏 PUZZLE THALÈS
-        // ==================================================
+        // ===================== PUZZLE =====================
         if (hit.collider.CompareTag("CorrectD") &&
             GameInput.instance.InteractPressed() &&
             !puzzleSolved)
@@ -107,8 +164,6 @@ public class RaycastInteract : MonoBehaviour
 
             floorBlock.transform.position += Vector3.up * 1.5f;
             hiddenKey.SetActive(true);
-
-            Debug.Log("✔ Puzzle résolu");
         }
     }
 }
