@@ -50,7 +50,7 @@ public class ItemInHand : MonoBehaviour
 
                 item.isEquipped = true;
 
-                FindObjectOfType<InventoryUI>().RefreshUI();
+                Object.FindAnyObjectByType< InventoryUI>().RefreshUI();
             }
             // 🔥 REMETTRE OBJET
             else
@@ -62,7 +62,7 @@ public class ItemInHand : MonoBehaviour
                 currentObject = null;
                 currentItem = null;
 
-                FindObjectOfType<InventoryUI>().RefreshUI();
+                Object.FindAnyObjectByType<InventoryUI>().RefreshUI();
             }
         }
     }

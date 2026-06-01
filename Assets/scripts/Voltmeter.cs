@@ -4,37 +4,88 @@ using TMPro;
 public class Voltmeter : MonoBehaviour
 {
     public Transform batterySlot;
-    public TMP_Text voltageText;
+    public TextMeshProUGUI voltageText;
 
     private GameObject currentBattery;
-    public void Start()
+
+    private string defaultText = "0 V";
+
+    void Start()
     {
-        voltageText.text = "0 V";
+        ResetVoltmeter();
     }
+
     public void InsertBattery(GameObject battery)
     {
+        if (battery == null) return;
         if (currentBattery != null) return;
 
         currentBattery = battery;
 
+        BatteryItem data = battery.GetComponent<BatteryItem>();
+        if (data != null)
+            data.isInUse = true;
+
         Rigidbody rb = battery.GetComponent<Rigidbody>();
         if (rb != null)
+        {
             rb.isKinematic = true;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
 
         battery.transform.SetParent(batterySlot);
-
         battery.transform.localPosition = Vector3.zero;
         battery.transform.localRotation = Quaternion.identity;
-        BatteryItem item = battery.GetComponent<BatteryItem>();
+        battery.transform.localScale = Vector3.one;
 
-        if (item != null)
+        if (voltageText != null && data != null)
+            voltageText.text = data.voltage + " V";
+
+        Debug.Log("⚡ Batterie insérée");
+    }
+
+    public GameObject RemoveBattery()
+    {
+        if (currentBattery == null)
+            return null;
+
+        GameObject battery = currentBattery;
+        currentBattery = null;
+
+        BatteryItem data = battery.GetComponent<BatteryItem>();
+        if (data != null)
+            data.isInUse = false;
+
+        battery.transform.SetParent(null);
+
+        Rigidbody rb = battery.GetComponent<Rigidbody>();
+        if (rb != null)
         {
-            voltageText.text = item.voltage + " V";
-            Debug.Log("⚡ Voltage : " + item.voltage);
+            rb.isKinematic = false;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
         }
-        else
-        {
-            voltageText.text = "0 V";
-        }
+
+        ResetVoltmeter();
+
+        Debug.Log("🔋 Batterie retirée");
+
+        return battery;
+    }
+
+    public bool HasBattery()
+    {
+        return currentBattery != null;
+    }
+
+    void ResetVoltmeter()
+    {
+        currentBattery = null;
+
+        if (voltageText != null)
+            voltageText.text = defaultText;
+
+        Debug.Log("🔄 Voltmètre reset");
     }
 }
