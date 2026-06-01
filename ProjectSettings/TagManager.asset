@@ -10,6 +10,8 @@ TagManager:
   - Battery
   - Voltmeter
   - battreieslot
+  - Lampe
+  - LampSwitch
   layers:
   - Default
   - TransparentFX

@@ -3,11 +3,10 @@
 public class battreieslot : MonoBehaviour
 {
     public Transform batterySlot;
-    public Light lampLight;
 
-    private GameObject currentBattery;
+    protected GameObject currentBattery;
 
-    public void InsertBattery(GameObject battery)
+    public virtual void InsertBattery(GameObject battery)
     {
         if (battery == null) return;
         if (currentBattery != null) return;
@@ -31,13 +30,10 @@ public class battreieslot : MonoBehaviour
         battery.transform.localRotation = Quaternion.identity;
         battery.transform.localScale = Vector3.one;
 
-        if (lampLight != null)
-            lampLight.enabled = true;
-
-        Debug.Log("💡 Batterie dans slot");
+        Debug.Log("🔋 Batterie placée dans le slot");
     }
 
-    public GameObject RemoveBattery()
+    public virtual GameObject RemoveBattery()
     {
         if (currentBattery == null)
             return null;
@@ -59,10 +55,7 @@ public class battreieslot : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
         }
 
-        if (lampLight != null)
-            lampLight.enabled = false;
-
-        Debug.Log("🔋 Slot vidé");
+        Debug.Log("🔋 Batterie retirée du slot");
 
         return battery;
     }

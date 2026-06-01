@@ -8,6 +8,8 @@ public class BatteryItem : MonoBehaviour
     public Quaternion startRotation;
     public Transform startParent;
 
+    public Vector3 defaultScale;
+
     public bool isInUse = false;
 
     void Start()
@@ -15,15 +17,17 @@ public class BatteryItem : MonoBehaviour
         startPosition = transform.position;
         startRotation = transform.rotation;
         startParent = transform.parent;
+
+        defaultScale = transform.localScale;
     }
 
     public void ResetPosition()
     {
-        if (isInUse) return; // 🔒 bloque si utilisée
-
         transform.SetParent(startParent);
         transform.position = startPosition;
         transform.rotation = startRotation;
+
+        ResetScale();
 
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
@@ -32,7 +36,10 @@ public class BatteryItem : MonoBehaviour
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
         }
+    }
 
-        Debug.Log("🔄 Batterie reset");
+    public void ResetScale()
+    {
+        transform.localScale = defaultScale;
     }
 }

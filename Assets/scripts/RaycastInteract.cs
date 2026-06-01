@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using static UnityEngine.InputSystem.Controls.AxisControl;
 
 public class RaycastInteract : MonoBehaviour
 {
@@ -31,7 +30,7 @@ public class RaycastInteract : MonoBehaviour
     {
         if (GameInput.instance == null) return;
 
-        // ===================== COLLECTIBLE =====================
+        // ================= COLLECTIBLE =================
         if (hit.collider.CompareTag("Collectible") &&
             GameInput.instance.InteractPressed())
         {
@@ -47,19 +46,19 @@ public class RaycastInteract : MonoBehaviour
 
             return;
         }
+
+        // ================= BATTERY SLOT =================
         if (hit.collider.GetComponentInParent<battreieslot>() &&
-      GameInput.instance.InteractPressed())
+            GameInput.instance.InteractPressed())
         {
             battreieslot slot =
                 hit.collider.GetComponentInParent<battreieslot>();
 
-            // 👉 si j’ai une batterie en main → je la mets dans slot
             if (currentBattery != null)
             {
                 slot.InsertBattery(currentBattery.gameObject);
                 currentBattery = null;
             }
-            // 👉 sinon je reprends la batterie du slot
             else
             {
                 GameObject batteryObj = slot.RemoveBattery();
@@ -84,25 +83,23 @@ public class RaycastInteract : MonoBehaviour
 
             return;
         }
-        // ===================== BATTERY =====================
+
+        // ================= BATTERY PICK =================
         if (hit.collider.CompareTag("Battery") &&
             GameInput.instance.InteractPressed())
         {
-            Voltmeter vm = Object.FindFirstObjectByType<Voltmeter>();
-
-            if (vm != null && vm.HasBattery())
+            // ❌ déjà une batterie en main
+            if (currentBattery != null)
             {
-                Debug.Log("⚠ Voltmètre occupé");
+                Debug.Log("⚠ Vous avez déjà une batterie en main");
                 return;
             }
 
-            BatteryItem newBattery = hit.collider.GetComponentInParent<BatteryItem>();
+            BatteryItem newBattery =
+                hit.collider.GetComponentInParent<BatteryItem>();
+
             if (newBattery == null) return;
-
             if (newBattery.isInUse) return;
-
-            if (currentBattery != null)
-                currentBattery.ResetPosition();
 
             currentBattery = newBattery;
 
@@ -117,7 +114,7 @@ public class RaycastInteract : MonoBehaviour
             return;
         }
 
-        // ===================== VOLTMETER =====================
+        // ================= VOLTMETER =================
         if (hit.collider.CompareTag("Voltmeter") &&
             GameInput.instance.InteractPressed())
         {
@@ -141,7 +138,7 @@ public class RaycastInteract : MonoBehaviour
                     Rigidbody rb = batteryObj.GetComponent<Rigidbody>();
                     if (rb != null)
                     {
-                        rb.isKinematic = false;
+                        rb.isKinematic = true;
                         rb.linearVelocity = Vector3.zero;
                         rb.angularVelocity = Vector3.zero;
                     }
@@ -155,7 +152,57 @@ public class RaycastInteract : MonoBehaviour
             return;
         }
 
-        // ===================== PUZZLE =====================
+        // ================= LAMPE =================
+        if (hit.collider.CompareTag("Lampe") &&
+            GameInput.instance.InteractPressed())
+        {
+            Lampe lampe = hit.collider.GetComponent<Lampe>();
+
+            if (lampe == null) return;
+
+            if (currentBattery != null)
+            {
+                lampe.InsertBattery(currentBattery.gameObject);
+                currentBattery = null;
+            }
+            else
+            {
+                GameObject batteryObj = lampe.RemoveBattery();
+
+                if (batteryObj != null)
+                {
+                    currentBattery = batteryObj.GetComponent<BatteryItem>();
+
+                    Rigidbody rb = batteryObj.GetComponent<Rigidbody>();
+                    if (rb != null)
+                    {
+                        rb.isKinematic = true;
+                        rb.linearVelocity = Vector3.zero;
+                        rb.angularVelocity = Vector3.zero;
+                    }
+
+                    batteryObj.transform.SetParent(handPoint);
+                    batteryObj.transform.localPosition = Vector3.zero;
+                    batteryObj.transform.localRotation = Quaternion.identity;
+                }
+            }
+
+            return;
+        }
+        if (hit.collider.GetComponentInParent<LampSwitch>() &&
+    GameInput.instance.InteractPressed())
+        {
+            LampSwitch sw = hit.collider.GetComponentInParent<LampSwitch>();
+
+            if (sw != null)
+            {
+                sw.Toggle();
+            }
+
+            return;
+        }
+
+        // ================= PUZZLE =================
         if (hit.collider.CompareTag("CorrectD") &&
             GameInput.instance.InteractPressed() &&
             !puzzleSolved)
