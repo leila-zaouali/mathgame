@@ -71,3 +71,4 @@ sysinfo.txt
 # ProjectSettings/ ❌ must be tracked
 # Packages/      ❌ must be tracked
 # *.meta         ❌ must NEVER be ignored 
+**/*serviceAccountKey.json.json
