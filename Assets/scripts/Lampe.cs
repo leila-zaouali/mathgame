@@ -10,7 +10,7 @@ public class Lampe : MonoBehaviour
     private BatteryItem currentBattery;
     private bool switchOn = false;
 
-    private bool scoreGiven = false; // 🔥 évite spam score
+    private bool scoreGiven = false;
 
     public bool HasBattery()
     {
@@ -73,26 +73,26 @@ public class Lampe : MonoBehaviour
     {
         if (lampLight == null) return;
 
-        bool hasEnergy = currentBattery != null &&
-                         Mathf.Approximately(currentBattery.voltage, requiredVoltage);
+        bool hasEnergy =
+            currentBattery != null &&
+            Mathf.Approximately(currentBattery.voltage, requiredVoltage);
 
         bool shouldBeOn = hasEnergy && switchOn;
 
         lampLight.enabled = shouldBeOn;
 
-        // 🔥 SCORE SYSTEM ICI
+        // ⭐ SCORE + PROGRESSION (OK)
         if (shouldBeOn && !scoreGiven)
         {
             scoreGiven = true;
 
             if (ScoreManager.instance != null)
                 ScoreManager.instance.AddScore(50);
-            APIManager.instance.SaveProgress("lamp", true);
 
-            Debug.Log("💡 Lampe allumée +50 score");
+
+            Debug.Log("💡 Lampe ON");
         }
 
-        // 🔄 reset score si lampe s’éteint
         if (!shouldBeOn)
         {
             scoreGiven = false;

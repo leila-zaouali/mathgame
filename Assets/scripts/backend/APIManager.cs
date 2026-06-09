@@ -56,43 +56,55 @@ public class APIManager : MonoBehaviour
         StartCoroutine(LoginRequest(username, password));
     }
 
-    IEnumerator LoginRequest(string username, string password)
-    {
-        string url = baseUrl + "/login";
+     IEnumerator LoginRequest(string username, string password)
+     {
+            string url = baseUrl + "/login";
 
-        string json = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
+            string json = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
 
-        UnityWebRequest request = new UnityWebRequest(url, "POST");
-        byte[] body = System.Text.Encoding.UTF8.GetBytes(json);
+            UnityWebRequest request = new UnityWebRequest(url, "POST");
+            byte[] body = System.Text.Encoding.UTF8.GetBytes(json);
 
-        request.uploadHandler = new UploadHandlerRaw(body);
-        request.downloadHandler = new DownloadHandlerBuffer();
-        request.SetRequestHeader("Content-Type", "application/json");
+            request.uploadHandler = new UploadHandlerRaw(body);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
 
-        yield return request.SendWebRequest();
+            yield return request.SendWebRequest();
 
-        if (request.result == UnityWebRequest.Result.Success)
-        {
-            string response = request.downloadHandler.text;
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                string response = request.downloadHandler.text;
+                Debug.Log("RAW LOGIN RESPONSE: " + response);
 
-            LoginResponse data = JsonUtility.FromJson<LoginResponse>(response);
+                LoginResponse data = JsonUtility.FromJson<LoginResponse>(response);
 
-            PlayerSession.UserId = data.userId;
+                // =====================
+                // USER ID ONLY
+                // =====================
+                PlayerSession.UserId = data.userId;
+                Debug.Log("✅ USER ID = " + PlayerSession.UserId);
 
-            SceneManager.LoadScene("intro1");
+                // =====================
+                // LOAD SCENE FIRST
+                // =====================
+                SceneManager.LoadScene("intro1");
 
-            yield return new WaitForSeconds(0.2f); // 🔥 IMPORTANT
-
-            while (ScoreManager.instance == null)
                 yield return null;
 
-            ScoreManager.instance.SetScore(data.user.score);
+                // =====================
+                // WAIT MANAGERS READY
+                // =====================
+                while (ScoreManager.instance == null)
+                    yield return null;
 
-            Debug.Log("📥 SCORE SET = " + data.user.score);
-        }
-    }
+                // ❌ IMPORTANT: NE PLUS UTILISER data.score ICI
+                // =====================
+                // GET FULL DATA FROM SERVER
+                // =====================
+                GetProgress();
+            }
+     }
 
-    // =====================
     // SAVE SCORE (BF28)
     // =====================
     public void SaveScore(int scoreToAdd)
@@ -102,11 +114,16 @@ public class APIManager : MonoBehaviour
 
     IEnumerator SaveScoreRequest(int scoreToAdd)
     {
+        if (string.IsNullOrEmpty(PlayerSession.UserId))
+        {
+            Debug.Log("❌ SaveScore blocked: UserId NULL");
+            yield break;
+        }
         string url = baseUrl + "/saveScore";
 
         string json =
             "{\"userId\":\"" + PlayerSession.UserId +
-            "\",\"scoreToAdd\":" + scoreToAdd + "}";
+            "\",\"score\":" + scoreToAdd + "}";
 
         Debug.Log("SEND SCORE JSON: " + json);
 
@@ -153,6 +170,11 @@ public class APIManager : MonoBehaviour
 
     IEnumerator SaveProgressRequest(string puzzleName, bool value)
     {
+        if (string.IsNullOrEmpty(PlayerSession.UserId))
+        {
+            Debug.Log("❌ SaveProgress blocked: UserId NULL");
+            yield break;
+        }
         string url = baseUrl + "/saveProgress";
 
         string json =
@@ -184,6 +206,11 @@ public class APIManager : MonoBehaviour
     }
     IEnumerator UpdateLevelRequest()
     {
+        if (string.IsNullOrEmpty(PlayerSession.UserId))
+        {
+            Debug.Log("❌ UpdateLevel blocked: UserId NULL");
+            yield break;
+        }
         string url = baseUrl + "/updateLevel";
 
         string json =
@@ -208,5 +235,65 @@ public class APIManager : MonoBehaviour
             Debug.Log("ERROR LEVEL UPDATE: " + request.error);
         }
     }
+    public void GetProgress()
+    {
+        StartCoroutine(GetProgressRequest());
+    }
+    IEnumerator GetProgressRequest()
+    {
+        string url = baseUrl + "/getProgress/" + PlayerSession.UserId;
+
+        UnityWebRequest request = UnityWebRequest.Get(url);
+
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            Debug.Log("PROGRESS: " + request.downloadHandler.text);
+
+            ProgressResponse data =
+                JsonUtility.FromJson<ProgressResponse>(
+                    request.downloadHandler.text);
+
+            // =====================
+            // SCORE
+            // =====================
+            if (ScoreManager.instance != null)
+                ScoreManager.instance.SetScore(data.score);
+
+            // =====================
+            // LEVEL
+            // =====================
+            Debug.Log("LEVEL = " + data.level);
+
+            // =====================
+            // PROGRESS CHECK
+            // =====================
+            Debug.Log("GAME1 = " + data.progress.game1);
+            Debug.Log("LAMP = " + data.progress.lamp_puzzle);
+            if (ProgressManager.instance != null)
+            {
+                ProgressManager.instance.game1Completed =
+                    data.progress.game1;
+
+                ProgressManager.instance.lampPuzzleCompleted =
+                    data.progress.lamp_puzzle;
+               
+               
+            }
+            if (data.progress != null && data.progress.game1)
+            {
+                StartCoroutine(WaitInventoryAndRestore());
+            }
+        }
+        IEnumerator WaitInventoryAndRestore()
+        {
+            while (Inventory.instance == null)
+                yield return null;
+
+            Inventory.instance.SetWaterDropFromSave();
+        }
+    }
 }
+
 

@@ -51,8 +51,7 @@ public class ScoreManager : MonoBehaviour
     {
         isSending = true;
 
-        api.SaveScore(value);
-
+        api.SaveScore(currentScore);
         yield return new WaitForSeconds(0.2f);
 
         isSending = false;

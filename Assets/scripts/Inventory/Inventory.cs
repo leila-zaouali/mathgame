@@ -62,7 +62,11 @@ public class Inventory : MonoBehaviour
                             break;
                     }
                 }
-
+                if (waterDropCount > 0)
+                {
+                    Debug.Log("💧 Déjà une goutte, skip");
+                    return;
+                }
                 items.Add(waterDropItem);
                 waterDropCount++;
 
@@ -71,5 +75,14 @@ public class Inventory : MonoBehaviour
                 // ❌ SUPPRIMÉ : ScoreManager.AddScore(50)
             }
         }
+    }
+    public void SetWaterDropFromSave()
+    {
+        if (waterDropCount > 0) return;
+
+        items.Add(waterDropItem);
+        waterDropCount = 1;
+
+        Debug.Log("💧 Goutte restaurée depuis Firebase");
     }
 }
