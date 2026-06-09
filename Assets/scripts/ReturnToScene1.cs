@@ -7,26 +7,32 @@ public class ReturnToScene1 : MonoBehaviour
     public string sceneName = "intro";
 
     private bool hasLoaded = false;
+    private bool alreadyProcessed = false;
 
-    void Update()
+   void Update()
+{
+    if (alreadyProcessed) return;
+    if (Inventory.instance == null) return;
+
+    if (Inventory.instance.totalH2OCollected >= requiredH2O)
     {
-        if (hasLoaded) return;
-        if (Inventory.instance == null) return;
+        alreadyProcessed = true;
 
-        if (Inventory.instance.totalH2OCollected >= requiredH2O)
+        Debug.Log("✔ Game1 terminé");
+
+        // BONUS UNE SEULE FOIS
+        if (ScoreManager.instance != null)
+            ScoreManager.instance.AddLevelBonus();
+
+        if (APIManager.instance != null)
         {
-            hasLoaded = true;
-
-            Debug.Log("✔ Niveau terminé");
-
-            // ⭐ BONUS FINAL
-            if (ScoreManager.instance != null)
-                ScoreManager.instance.AddLevelBonus();
-
-            // reset
-            Inventory.instance.totalH2OCollected = 0;
-
-            SceneManager.LoadScene(sceneName);
+            APIManager.instance.SaveProgress("game1", true);
+            APIManager.instance.UpdateLevel();
         }
+
+        Inventory.instance.totalH2OCollected = 0;
+
+        SceneManager.LoadScene(sceneName);
     }
+}
 }

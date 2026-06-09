@@ -3,7 +3,9 @@ public class LoginResponse
 {
     public bool success;
     public string userId;
-    public UserData user;
+    public int score;
+    public int level;
+    public string[] progress;
 }
 
 [System.Serializable]
