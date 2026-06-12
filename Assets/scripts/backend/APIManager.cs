@@ -6,8 +6,7 @@ using UnityEngine.SceneManagement;
 public class APIManager : MonoBehaviour
 {
     public static APIManager instance;
-
-    string baseUrl = "http://127.0.0.1:3000";
+    private string baseUrl = "http://127.0.0.1:3000";
 
     void Awake()
     {
@@ -16,12 +15,11 @@ public class APIManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
         instance = this;
         DontDestroyOnLoad(gameObject);
-
         Debug.Log("APIManager Awake");
     }
+
     // =====================
     // REGISTER
     // =====================
@@ -33,18 +31,15 @@ public class APIManager : MonoBehaviour
     IEnumerator RegisterRequest(string username, string password)
     {
         string url = baseUrl + "/register";
-
         string json = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
 
         UnityWebRequest request = new UnityWebRequest(url, "POST");
         byte[] body = System.Text.Encoding.UTF8.GetBytes(json);
-
         request.uploadHandler = new UploadHandlerRaw(body);
         request.downloadHandler = new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
 
         yield return request.SendWebRequest();
-
         Debug.Log("REGISTER: " + request.downloadHandler.text);
     }
 
@@ -56,56 +51,50 @@ public class APIManager : MonoBehaviour
         StartCoroutine(LoginRequest(username, password));
     }
 
-     IEnumerator LoginRequest(string username, string password)
-     {
-            string url = baseUrl + "/login";
+    IEnumerator LoginRequest(string username, string password)
+    {
+        string url = baseUrl + "/login";
+        string json = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
 
-            string json = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
+        UnityWebRequest request = new UnityWebRequest(url, "POST");
+        byte[] body = System.Text.Encoding.UTF8.GetBytes(json);
+        request.uploadHandler = new UploadHandlerRaw(body);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
 
-            UnityWebRequest request = new UnityWebRequest(url, "POST");
-            byte[] body = System.Text.Encoding.UTF8.GetBytes(json);
+        yield return request.SendWebRequest();
 
-            request.uploadHandler = new UploadHandlerRaw(body);
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            string response = request.downloadHandler.text;
+            Debug.Log("RAW LOGIN RESPONSE: " + response);
+            LoginResponse data = JsonUtility.FromJson<LoginResponse>(response);
 
-            yield return request.SendWebRequest();
+            // USER ID ONLY
+            PlayerSession.UserId = data.userId;
+            Debug.Log("✅ USER ID = " + PlayerSession.UserId);
 
-            if (request.result == UnityWebRequest.Result.Success)
+            // LOAD SCENE FIRST
+            if (PlayerPrefs.HasKey("cp_scene"))
             {
-                string response = request.downloadHandler.text;
-                Debug.Log("RAW LOGIN RESPONSE: " + response);
-
-                LoginResponse data = JsonUtility.FromJson<LoginResponse>(response);
-
-                // =====================
-                // USER ID ONLY
-                // =====================
-                PlayerSession.UserId = data.userId;
-                Debug.Log("✅ USER ID = " + PlayerSession.UserId);
-
-                // =====================
-                // LOAD SCENE FIRST
-                // =====================
-                SceneManager.LoadScene("intro1");
-
-                yield return null;
-
-                // =====================
-                // WAIT MANAGERS READY
-                // =====================
-                while (ScoreManager.instance == null)
-                    yield return null;
-
-                // ❌ IMPORTANT: NE PLUS UTILISER data.score ICI
-                // =====================
-                // GET FULL DATA FROM SERVER
-                // =====================
-                GetProgress();
+                SceneManager.LoadScene(PlayerPrefs.GetString("cp_scene"));
             }
-     }
+            else
+            {
+                SceneManager.LoadScene("intro1");
+            }
+            yield return null;
 
-    // SAVE SCORE (BF28)
+            // WAIT MANAGERS READY
+            while (ScoreManager.instance == null) yield return null;
+
+            // GET FULL DATA FROM SERVER
+            GetProgress();
+        }
+    }
+
+    // =====================
+    // SAVE SCORE
     // =====================
     public void SaveScore(int scoreToAdd)
     {
@@ -119,24 +108,18 @@ public class APIManager : MonoBehaviour
             Debug.Log("❌ SaveScore blocked: UserId NULL");
             yield break;
         }
+
         string url = baseUrl + "/saveScore";
-
-        string json =
-            "{\"userId\":\"" + PlayerSession.UserId +
-            "\",\"score\":" + scoreToAdd + "}";
-
+        string json = "{\"userId\":\"" + PlayerSession.UserId + "\",\"score\":" + scoreToAdd + "}";
         Debug.Log("SEND SCORE JSON: " + json);
 
         UnityWebRequest request = new UnityWebRequest(url, "POST");
-
         byte[] body = System.Text.Encoding.UTF8.GetBytes(json);
-
         request.uploadHandler = new UploadHandlerRaw(body);
         request.downloadHandler = new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
 
         yield return request.SendWebRequest();
-
         Debug.Log("RESPONSE: " + request.downloadHandler.text);
     }
 
@@ -151,18 +134,19 @@ public class APIManager : MonoBehaviour
     IEnumerator PingRequest()
     {
         UnityWebRequest request = UnityWebRequest.Get(baseUrl + "/ping");
-
         yield return request.SendWebRequest();
-
         Debug.Log("PING: " + request.downloadHandler.text);
     }
+
     IEnumerator SetScoreNextFrame(int score)
     {
         yield return new WaitForSeconds(0.2f);
-
         ScoreManager.instance.SetScore(score);
-
     }
+
+    // =====================
+    // SAVE PROGRESS
+    // =====================
     public void SaveProgress(string puzzleName, bool value)
     {
         StartCoroutine(SaveProgressRequest(puzzleName, value));
@@ -175,35 +159,28 @@ public class APIManager : MonoBehaviour
             Debug.Log("❌ SaveProgress blocked: UserId NULL");
             yield break;
         }
+
         string url = baseUrl + "/saveProgress";
+        string json = "{\"userId\":\"" + PlayerSession.UserId + "\",\"puzzleName\":\"" + puzzleName + "\",\"value\":" + value.ToString().ToLower() + "}";
 
-        string json =
-            "{\"userId\":\"" + PlayerSession.UserId +
-            "\",\"puzzleName\":\"" + puzzleName +
-            "\",\"value\":" + value.ToString().ToLower() + "}";
-
-        UnityWebRequest request =
-            new UnityWebRequest(url, "POST");
-
-        byte[] body =
-            System.Text.Encoding.UTF8.GetBytes(json);
-
-        request.uploadHandler =
-            new UploadHandlerRaw(body);
-
-        request.downloadHandler =
-            new DownloadHandlerBuffer();
-
+        UnityWebRequest request = new UnityWebRequest(url, "POST");
+        byte[] body = System.Text.Encoding.UTF8.GetBytes(json);
+        request.uploadHandler = new UploadHandlerRaw(body);
+        request.downloadHandler = new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
 
         yield return request.SendWebRequest();
-
         Debug.Log(request.downloadHandler.text);
     }
+
+    // =====================
+    // UPDATE LEVEL
+    // =====================
     public void UpdateLevel()
     {
         StartCoroutine(UpdateLevelRequest());
     }
+
     IEnumerator UpdateLevelRequest()
     {
         if (string.IsNullOrEmpty(PlayerSession.UserId))
@@ -211,15 +188,12 @@ public class APIManager : MonoBehaviour
             Debug.Log("❌ UpdateLevel blocked: UserId NULL");
             yield break;
         }
-        string url = baseUrl + "/updateLevel";
 
-        string json =
-            "{\"userId\":\"" + PlayerSession.UserId + "\"}";
+        string url = baseUrl + "/updateLevel";
+        string json = "{\"userId\":\"" + PlayerSession.UserId + "\"}";
 
         UnityWebRequest request = new UnityWebRequest(url, "POST");
-
         byte[] body = System.Text.Encoding.UTF8.GetBytes(json);
-
         request.uploadHandler = new UploadHandlerRaw(body);
         request.downloadHandler = new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
@@ -235,65 +209,53 @@ public class APIManager : MonoBehaviour
             Debug.Log("ERROR LEVEL UPDATE: " + request.error);
         }
     }
+
+    // =====================
+    // GET PROGRESS
+    // =====================
     public void GetProgress()
     {
         StartCoroutine(GetProgressRequest());
     }
+
     IEnumerator GetProgressRequest()
     {
         string url = baseUrl + "/getProgress/" + PlayerSession.UserId;
-
         UnityWebRequest request = UnityWebRequest.Get(url);
-
         yield return request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.Success)
         {
             Debug.Log("PROGRESS: " + request.downloadHandler.text);
+            ProgressResponse data = JsonUtility.FromJson<ProgressResponse>(request.downloadHandler.text);
 
-            ProgressResponse data =
-                JsonUtility.FromJson<ProgressResponse>(
-                    request.downloadHandler.text);
-
-            // =====================
             // SCORE
-            // =====================
             if (ScoreManager.instance != null)
                 ScoreManager.instance.SetScore(data.score);
 
-            // =====================
             // LEVEL
-            // =====================
             Debug.Log("LEVEL = " + data.level);
 
-            // =====================
             // PROGRESS CHECK
-            // =====================
             Debug.Log("GAME1 = " + data.progress.game1);
             Debug.Log("LAMP = " + data.progress.lamp_puzzle);
+
             if (ProgressManager.instance != null)
             {
-                ProgressManager.instance.game1Completed =
-                    data.progress.game1;
-
-                ProgressManager.instance.lampPuzzleCompleted =
-                    data.progress.lamp_puzzle;
-               
-               
+                ProgressManager.instance.game1Completed = data.progress.game1;
+                ProgressManager.instance.lampPuzzleCompleted = data.progress.lamp_puzzle;
             }
+
             if (data.progress != null && data.progress.game1)
             {
                 StartCoroutine(WaitInventoryAndRestore());
             }
         }
-        IEnumerator WaitInventoryAndRestore()
-        {
-            while (Inventory.instance == null)
-                yield return null;
+    }
 
-            Inventory.instance.SetWaterDropFromSave();
-        }
+    IEnumerator WaitInventoryAndRestore()
+    {
+        while (Inventory.instance == null) yield return null;
+        Inventory.instance.SetWaterDropFromSave();
     }
 }
-
-

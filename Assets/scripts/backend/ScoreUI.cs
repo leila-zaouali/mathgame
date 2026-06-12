@@ -9,6 +9,6 @@ public class ScoreUI : MonoBehaviour
     {
         if (ScoreManager.instance == null) return;
 
-        scoreText.text = "Score : " + ScoreManager.instance.currentScore;
+        scoreText.text = ""+ ScoreManager.instance.currentScore;
     }
 }

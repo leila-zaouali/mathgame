@@ -31,7 +31,8 @@ public class ReturnToScene1 : MonoBehaviour
         }
 
         Inventory.instance.totalH2OCollected = 0;
-
+          
+        GameState.returnFromGame1 = true;
         SceneManager.LoadScene(sceneName);
     }
 }
