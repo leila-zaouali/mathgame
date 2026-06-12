@@ -7,7 +7,7 @@ public class WaterPuzzleManager : MonoBehaviour
     public string returnScene = "intro";
 
     private bool completed = false;
-
+    public Checkpoint checkpoint;
     void Start()
     {
         if (ProgressManager.instance != null &&
@@ -44,8 +44,11 @@ public class WaterPuzzleManager : MonoBehaviour
         if (completed) return;
 
         completed = true;
+       
 
         Debug.Log("💧 Puzzle eau terminé");
+        //GameState.returnFromGame1 = true;
+
 
         if (APIManager.instance != null)
         {
@@ -60,7 +63,6 @@ public class WaterPuzzleManager : MonoBehaviour
         {
             Inventory.instance.totalH2OCollected = 3;
         }
-
         SceneManager.LoadScene(returnScene);
     }
 }
