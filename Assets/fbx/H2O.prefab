@@ -227,7 +227,7 @@ GameObject:
   - component: {fileID: 503702481097175545}
   - component: {fileID: 516181533209856343}
   - component: {fileID: 8400779403323387721}
-  - component: {fileID: 7070925535972133357}
+  - component: {fileID: 4260259831884680376}
   m_Layer: 0
   m_Name: H2O
   m_TagString: Collectible
@@ -288,7 +288,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 1
   height: 0.5
---- !u!114 &7070925535972133357
+--- !u!114 &4260259831884680376
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -297,7 +297,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4484307669902370330}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83d3b6e946c838d43bc413a3f6e9d3e3, type: 3}
+  m_Script: {fileID: 11500000, guid: d13d90f7742d5c54c9312480004e0e0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   itemName: H2O

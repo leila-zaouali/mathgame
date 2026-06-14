@@ -26,19 +26,28 @@ public class ProgressManager : MonoBehaviour
         Debug.Log("HAS CHECKPOINT = " + hasCheckpoint);
         Debug.Log("CHECKPOINT POS = " + checkpointPosition);
     }
-    void LoadCheckpoint()
+
+    public void LoadCheckpoint()
     {
-        if (PlayerPrefs.HasKey("cp_x"))
+        string id = PlayerSession.UserId;
+
+        if (PlayerPrefs.GetInt(id + "_cp_active", 0) == 0)
         {
-            checkpointPosition = new Vector3(
-                PlayerPrefs.GetFloat("cp_x"),
-                PlayerPrefs.GetFloat("cp_y"),
-                PlayerPrefs.GetFloat("cp_z")
-            );
-
-            hasCheckpoint = true;
-
-            Debug.Log("📥 Checkpoint chargé depuis PlayerPrefs");
+            hasCheckpoint = false;
+            Debug.Log("📍 PAS DE CHECKPOINT POUR " + id);
+            return;
         }
+
+        checkpointScene = PlayerPrefs.GetString(id + "_cp_scene");
+
+        checkpointPosition = new Vector3(
+            PlayerPrefs.GetFloat(id + "_cp_x"),
+            PlayerPrefs.GetFloat(id + "_cp_y"),
+            PlayerPrefs.GetFloat(id + "_cp_z")
+        );
+
+        hasCheckpoint = true;
+
+        Debug.Log("📥 CHECKPOINT CHARGÉ POUR " + id);
     }
 }

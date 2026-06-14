@@ -7,7 +7,8 @@ public class APIManager : MonoBehaviour
 {
     public static APIManager instance;
     private string baseUrl = "http://127.0.0.1:3000";
-
+    public static bool restoreInventory;
+    public static string nextScene;
     void Awake()
     {
         if (instance != null && instance != this)
@@ -73,18 +74,19 @@ public class APIManager : MonoBehaviour
             // USER ID ONLY
             PlayerSession.UserId = data.userId;
             Debug.Log("✅ USER ID = " + PlayerSession.UserId);
-
+            string id = PlayerSession.UserId;
             // LOAD SCENE FIRST
-            if (PlayerPrefs.HasKey("cp_scene"))
+            if (PlayerPrefs.GetInt(id + "_cp_active", 0) == 1)
             {
-                SceneManager.LoadScene(PlayerPrefs.GetString("cp_scene"));
+                APIManager.nextScene = PlayerPrefs.GetString(id + "_cp_scene");
             }
             else
             {
-                SceneManager.LoadScene("intro1");
+                APIManager.nextScene = "intro1";
             }
-            yield return null;
 
+            SceneManager.LoadScene("LoadingScene");
+            
             // WAIT MANAGERS READY
             while (ScoreManager.instance == null) yield return null;
 
@@ -217,17 +219,19 @@ public class APIManager : MonoBehaviour
     {
         StartCoroutine(GetProgressRequest());
     }
-
     IEnumerator GetProgressRequest()
     {
         string url = baseUrl + "/getProgress/" + PlayerSession.UserId;
         UnityWebRequest request = UnityWebRequest.Get(url);
+
         yield return request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.Success)
         {
             Debug.Log("PROGRESS: " + request.downloadHandler.text);
-            ProgressResponse data = JsonUtility.FromJson<ProgressResponse>(request.downloadHandler.text);
+
+            ProgressResponse data =
+                JsonUtility.FromJson<ProgressResponse>(request.downloadHandler.text);
 
             // SCORE
             if (ScoreManager.instance != null)
@@ -236,7 +240,7 @@ public class APIManager : MonoBehaviour
             // LEVEL
             Debug.Log("LEVEL = " + data.level);
 
-            // PROGRESS CHECK
+            // PROGRESS
             Debug.Log("GAME1 = " + data.progress.game1);
             Debug.Log("LAMP = " + data.progress.lamp_puzzle);
 
@@ -246,13 +250,10 @@ public class APIManager : MonoBehaviour
                 ProgressManager.instance.lampPuzzleCompleted = data.progress.lamp_puzzle;
             }
 
-            if (data.progress != null && data.progress.game1)
-            {
-                StartCoroutine(WaitInventoryAndRestore());
-            }
+            // ✅ IMPORTANT : juste stocker l’info
+            restoreInventory = (data.progress != null && data.progress.game1);
         }
     }
-
     IEnumerator WaitInventoryAndRestore()
     {
         while (Inventory.instance == null) yield return null;

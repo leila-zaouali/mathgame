@@ -12,17 +12,16 @@ public class Checkpoint : MonoBehaviour
 
         used = true;
 
-        ProgressManager.instance.checkpointPosition = transform.position;
-        ProgressManager.instance.checkpointScene = SceneManager.GetActiveScene().name;
-        ProgressManager.instance.hasCheckpoint = true;
+        string id = PlayerSession.UserId;
 
-        PlayerPrefs.SetString("cp_scene", ProgressManager.instance.checkpointScene);
-        PlayerPrefs.SetFloat("cp_x", transform.position.x);
-        PlayerPrefs.SetFloat("cp_y", transform.position.y);
-        PlayerPrefs.SetFloat("cp_z", transform.position.z);
+        PlayerPrefs.SetString(id + "_cp_scene", SceneManager.GetActiveScene().name);
+        PlayerPrefs.SetFloat(id + "_cp_x", transform.position.x);
+        PlayerPrefs.SetFloat(id + "_cp_y", transform.position.y);
+        PlayerPrefs.SetFloat(id + "_cp_z", transform.position.z);
+        PlayerPrefs.SetInt(id + "_cp_active", 1);
 
         PlayerPrefs.Save();
 
-        Debug.Log("📍 CHECKPOINT SAUVEGARDÉ AVEC SCÈNE");
+        Debug.Log("📍 CHECKPOINT SAUVEGARDÉ POUR " + id);
     }
 }

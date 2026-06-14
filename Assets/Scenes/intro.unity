@@ -286,7 +286,7 @@ GameObject:
   - component: {fileID: 63643152}
   - component: {fileID: 63643151}
   m_Layer: 0
-  m_Name: inventory1manager
+  m_Name: inventoryselectormanager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14553,50 +14553,6 @@ Transform:
   - {fileID: 94511331}
   m_Father: {fileID: 1938000903}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1031827334
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1031827336}
-  - component: {fileID: 1031827335}
-  m_Layer: 0
-  m_Name: ApiManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1031827335
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1031827334}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b71cf8048cbbd74459518ac21fbd22ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &1031827336
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1031827334}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.2, y: 3.81, z: -1.107}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1032798769
 GameObject:
   m_ObjectHideFlags: 0
@@ -26764,7 +26720,7 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5866453905603565081, guid: 924b8259e64770a40a68a352a309c6fd, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2272160231605809481}
+      addedObject: {fileID: 0}
     - targetCorrespondingSourceObject: {fileID: 1007630784677299429, guid: 924b8259e64770a40a68a352a309c6fd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 90427159}
@@ -26778,7 +26734,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2272160231605809482}
-  - component: {fileID: 2272160231605809481}
+  - component: {fileID: 2272160231605809483}
   m_Layer: 0
   m_Name: Torch
   m_TagString: Collectible
@@ -26786,21 +26742,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2272160231605809481
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2272160231605809480}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83d3b6e946c838d43bc413a3f6e9d3e3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemName: Torch
-  icon: {fileID: 21300000, guid: 891afaf94003fae42a07d43e77415ef9, type: 3}
-  prefab: {fileID: 6217935882556909540, guid: 1f75e83b7d6134042af0649aaeef7a0a, type: 3}
 --- !u!4 &2272160231605809482
 Transform:
   m_ObjectHideFlags: 0
@@ -26817,6 +26758,21 @@ Transform:
   - {fileID: 90427160}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2272160231605809483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2272160231605809480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d13d90f7742d5c54c9312480004e0e0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemName: torche
+  icon: {fileID: 21300000, guid: 891afaf94003fae42a07d43e77415ef9, type: 3}
+  prefab: {fileID: 6217935882556909540, guid: 1f75e83b7d6134042af0649aaeef7a0a, type: 3}
 --- !u!1001 &5220213602313712992
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -27000,4 +26956,3 @@ SceneRoots:
   - {fileID: 947982023}
   - {fileID: 2032341781}
   - {fileID: 2026571503}
-  - {fileID: 1031827336}
