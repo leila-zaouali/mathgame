@@ -5,18 +5,29 @@ public class SpawnManager1 : MonoBehaviour
 {
     public Transform defaultSpawn;
 
+    private static bool spawned = false;
+
+    void OnEnable()
+    {
+        spawned = false;
+    }
+
     IEnumerator Start()
     {
+        if (spawned)
+            yield break;
+
+        spawned = true;
+
         GameObject player = null;
 
-        // 🔥 attendre que le player existe
         while (player == null)
         {
             player = GameObject.FindGameObjectWithTag("Player");
             yield return null;
         }
 
-        yield return null; // sécurité 1 frame
+        yield return new WaitForSeconds(0.1f);
 
         Vector3 pos = defaultSpawn.position;
 
@@ -24,13 +35,21 @@ public class SpawnManager1 : MonoBehaviour
             ProgressManager.instance.hasCheckpoint)
         {
             pos = ProgressManager.instance.checkpointPosition;
-            Debug.Log("🎯 SPAWN CHECKPOINT APPLIED");
-        }
-        else
-        {
-            Debug.Log("🎯 SPAWN DEFAULT");
         }
 
         player.transform.position = pos;
+
+        Rigidbody rb = player.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        Debug.Log("FINAL SPAWN APPLIED");
+    }
+    void Awake()
+    {
+        Debug.Log("SpawnManager INSTANCE = " + gameObject.GetInstanceID());
     }
 }

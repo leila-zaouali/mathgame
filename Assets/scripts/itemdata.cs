@@ -1,10 +1,9 @@
 using UnityEngine;
 
-public class ItemData : MonoBehaviour
+[System.Serializable]
+public class ItemData
 {
     public string itemName;
-
     public Sprite icon;
-
     public GameObject prefab;
 }

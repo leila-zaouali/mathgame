@@ -34,14 +34,12 @@ public class RaycastInteract : MonoBehaviour
         if (hit.collider.CompareTag("Collectible") &&
             GameInput.instance.InteractPressed())
         {
-            Transform root = hit.collider.transform.root;
+            WorldItem item = hit.collider.GetComponentInParent<WorldItem>();
 
-            ItemData data = root.GetComponent<ItemData>();
-
-            if (data != null)
+            if (item != null)
             {
-                Inventory.instance.AddItem(data.itemName, data.icon, data.prefab);
-                Destroy(root.gameObject);
+                Inventory.instance.AddItem(item.itemName, item.icon, item.prefab);
+                Destroy(item.gameObject);
             }
 
             return;

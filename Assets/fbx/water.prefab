@@ -63,7 +63,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 69f2da8ce7cad50499f70529ee7888cf, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 1392587f9fa07fc4fba7c5866d6f4fff, type: 2}
+      objectReference: {fileID: 2100000, guid: 626710b964c98c549946cbe9aef6ead5, type: 2}
     - target: {fileID: 919132149155446097, guid: 69f2da8ce7cad50499f70529ee7888cf, type: 3}
       propertyPath: m_Name
       value: water
@@ -74,31 +74,16 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 69f2da8ce7cad50499f70529ee7888cf, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1672222106713182387}
+      addedObject: {fileID: -5843441443715428312}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 69f2da8ce7cad50499f70529ee7888cf, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -5843441443715428312}
+      addedObject: {fileID: -3934917642338762247}
   m_SourcePrefab: {fileID: 100100000, guid: 69f2da8ce7cad50499f70529ee7888cf, type: 3}
 --- !u!1 &6220053563891387087 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 69f2da8ce7cad50499f70529ee7888cf, type: 3}
   m_PrefabInstance: {fileID: 6526692308856551326}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1672222106713182387
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6220053563891387087}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83d3b6e946c838d43bc413a3f6e9d3e3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemName: water
-  icon: {fileID: 21300000, guid: 8f582f7d62fcc834aaf165ad19adb80f, type: 3}
-  prefab: {fileID: 6220053563891387087}
 --- !u!114 &-5843441443715428312
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -111,3 +96,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e05b9cff1c9a2647987c15ba8e01a5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-3934917642338762247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6220053563891387087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d13d90f7742d5c54c9312480004e0e0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemName: water
+  icon: {fileID: 21300000, guid: 8f582f7d62fcc834aaf165ad19adb80f, type: 3}
+  prefab: {fileID: 6220053563891387087}

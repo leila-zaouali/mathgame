@@ -227,7 +227,7 @@ GameObject:
   - component: {fileID: 3111827781005574080}
   - component: {fileID: 274692576851869928}
   - component: {fileID: 2970530059041563329}
-  - component: {fileID: 6900198141711601846}
+  - component: {fileID: 5802107905323291725}
   m_Layer: 0
   m_Name: N2
   m_TagString: Collectible
@@ -287,7 +287,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 1
   height: 0.5
---- !u!114 &6900198141711601846
+--- !u!114 &5802107905323291725
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -296,7 +296,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8654032225166863315}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83d3b6e946c838d43bc413a3f6e9d3e3, type: 3}
+  m_Script: {fileID: 11500000, guid: d13d90f7742d5c54c9312480004e0e0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   itemName: N2
