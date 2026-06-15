@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Inventory : MonoBehaviour
@@ -23,6 +24,25 @@ public class Inventory : MonoBehaviour
 
         instance = this;
         DontDestroyOnLoad(gameObject);
+    }
+    public void InitInventory()
+    {
+        StartCoroutine(LoadInventoryCoroutine());
+    }
+    IEnumerator Start()
+    {
+        yield return new WaitForSeconds(1f);
+
+        string scene = APIManager.nextScene;
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
+
+        //yield return new WaitForSeconds(0.5f);
+
+        //if (Inventory.instance != null)
+        //{
+        //    Inventory.instance.InitInventory();
+        //}
     }
 
 
@@ -75,6 +95,7 @@ public class Inventory : MonoBehaviour
                 // ❌ SUPPRIMÉ : ScoreManager.AddScore(50)
             }
         }
+        SaveInventory();
     }
     public void SetWaterDropFromSave()
     {
@@ -84,5 +105,119 @@ public class Inventory : MonoBehaviour
         waterDropCount = 1;
 
         Debug.Log("💧 Goutte restaurée depuis Firebase");
+    }
+    public void SaveInventory()
+    {
+        string data = "";
+        foreach (var item in items)
+        {
+            data += item.itemName + ";";
+        }
+
+        //// Backup local
+        //PlayerPrefs.SetString("inventory_data", data);
+        //PlayerPrefs.Save();
+
+        // ✅ Sauvegarde sur le serveur
+        if (APIManager.instance != null)
+            APIManager.instance.SaveInventory(data);
+
+        Debug.Log("💾 Inventory sauvegardé (local + serveur)");
+    }
+    public void LoadInventory()
+    {
+        StartCoroutine(LoadInventoryCoroutine());
+    }
+
+    IEnumerator LoadInventoryCoroutine()
+    {
+        while (ItemDatabase.instance == null)
+        {
+            Debug.Log("⏳ Waiting ItemDatabase...");
+            yield return null;
+        }
+
+        items.Clear();
+
+        string data = PlayerPrefs.GetString("inventory_data", "");
+
+        Debug.Log("📥 LOAD RAW = " + data);
+
+        if (string.IsNullOrEmpty(data))
+            yield break;
+
+        string[] names = data.Split(';');
+
+        foreach (string n in names)
+        {
+            if (string.IsNullOrEmpty(n)) continue;
+
+            ItemData itemData = ItemDatabase.instance.Get(n);
+
+            if (itemData == null)
+            {
+                Debug.LogWarning("⚠ Item introuvable: " + n);
+                continue;
+            }
+
+            InventoryItem item = new InventoryItem();
+            item.itemName = itemData.itemName;
+            item.icon = itemData.icon;
+            item.prefab = itemData.prefab;
+
+            items.Add(item);
+        }
+
+        Debug.Log("📥 Inventory restauré OK = " + items.Count);
+    }
+    public void RestoreInventoryFromServer(string data)
+    {
+        StartCoroutine(RestoreInventoryCoroutine(data));
+    }
+
+    IEnumerator RestoreInventoryCoroutine(string data)
+    {
+        while (ItemDatabase.instance == null) yield return null;
+
+        items.Clear();
+        waterDropCount = 0;
+        h2oCount = 0;
+
+        if (string.IsNullOrEmpty(data)) yield break;
+
+        string[] names = data.Split(';');
+
+        foreach (string n in names)
+        {
+            if (string.IsNullOrEmpty(n)) continue;
+
+            // Cas spécial WaterDrop
+            if (n == "WaterDrop")
+            {
+                if (waterDropCount == 0)
+                {
+                    items.Add(waterDropItem);
+                    waterDropCount++;
+                }
+                continue;
+            }
+
+            ItemData itemData = ItemDatabase.instance.Get(n);
+            if (itemData == null)
+            {
+                Debug.LogWarning("⚠ Item introuvable: " + n);
+                continue;
+            }
+
+            InventoryItem item = new InventoryItem();
+            item.itemName = itemData.itemName;
+            item.icon = itemData.icon;
+            item.prefab = itemData.prefab;
+            items.Add(item);
+
+            if (n == "H2O") h2oCount++;
+        }
+
+        Debug.Log("📥 Inventory restauré depuis serveur = " + items.Count + " items");
     }
 }

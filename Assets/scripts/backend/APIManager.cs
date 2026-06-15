@@ -47,12 +47,12 @@ public class APIManager : MonoBehaviour
     // =====================
     // LOGIN
     // =====================
-    public void Login(string username, string password)
+    public void Login(string username, string password, System.Action<bool, string> callback)
     {
-        StartCoroutine(LoginRequest(username, password));
+        StartCoroutine(LoginRequest(username, password, callback));
     }
 
-    IEnumerator LoginRequest(string username, string password)
+    IEnumerator LoginRequest(string username, string password, System.Action<bool, string> callback)
     {
         string url = baseUrl + "/login";
         string json = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
@@ -71,27 +71,34 @@ public class APIManager : MonoBehaviour
             Debug.Log("RAW LOGIN RESPONSE: " + response);
             LoginResponse data = JsonUtility.FromJson<LoginResponse>(response);
 
-            // USER ID ONLY
+            if (!data.success)
+            {
+                // ❌ Joueur non trouvé
+                callback(false, "Joueur non trouvé !");
+                yield break;
+            }
+
+            // ✅ Login OK
+            callback(true, "");
+
             PlayerSession.UserId = data.userId;
             Debug.Log("✅ USER ID = " + PlayerSession.UserId);
             string id = PlayerSession.UserId;
-            // LOAD SCENE FIRST
+
             if (PlayerPrefs.GetInt(id + "_cp_active", 0) == 1)
-            {
                 APIManager.nextScene = PlayerPrefs.GetString(id + "_cp_scene");
-            }
             else
-            {
                 APIManager.nextScene = "intro1";
-            }
 
             SceneManager.LoadScene("LoadingScene");
-            
-            // WAIT MANAGERS READY
+
             while (ScoreManager.instance == null) yield return null;
 
-            // GET FULL DATA FROM SERVER
             GetProgress();
+        }
+        else
+        {
+            callback(false, "Erreur de connexion !");
         }
     }
 
@@ -252,11 +259,49 @@ public class APIManager : MonoBehaviour
 
             // ✅ IMPORTANT : juste stocker l’info
             restoreInventory = (data.progress != null && data.progress.game1);
+            // RESTORE INVENTORY FROM SERVER
+            if (!string.IsNullOrEmpty(data.inventory))
+            {
+                StartCoroutine(WaitAndRestoreInventory(data.inventory));
+            }
         }
+    }
+    IEnumerator WaitAndRestoreInventory(string inventoryData)
+    {
+        while (Inventory.instance == null) yield return null;
+        Inventory.instance.RestoreInventoryFromServer(inventoryData);
     }
     IEnumerator WaitInventoryAndRestore()
     {
         while (Inventory.instance == null) yield return null;
         Inventory.instance.SetWaterDropFromSave();
+    }
+    // =====================
+    // SAVE INVENTORY
+    // =====================
+    public void SaveInventory(string inventoryData)
+    {
+        StartCoroutine(SaveInventoryRequest(inventoryData));
+    }
+
+    IEnumerator SaveInventoryRequest(string inventoryData)
+    {
+        if (string.IsNullOrEmpty(PlayerSession.UserId))
+        {
+            Debug.Log("❌ SaveInventory blocked: UserId NULL");
+            yield break;
+        }
+
+        string url = baseUrl + "/saveInventory";
+        string json = "{\"userId\":\"" + PlayerSession.UserId + "\",\"inventory\":\"" + inventoryData + "\"}";
+
+        UnityWebRequest request = new UnityWebRequest(url, "POST");
+        byte[] body = System.Text.Encoding.UTF8.GetBytes(json);
+        request.uploadHandler = new UploadHandlerRaw(body);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+        Debug.Log("SAVE INVENTORY: " + request.downloadHandler.text);
     }
 }
