@@ -31,8 +31,14 @@ public class UIManager : MonoBehaviour
         string username = usernameInput.text;
         string password = passwordInput.text;
 
-        api.Login(username, password);
+        debugText.text = "Connexion...";
 
-        debugText.text = "Login sent...";
+        api.Login(username, password, (success, message) =>
+        {
+            if (!success)
+            {
+                debugText.text = message; // ? "Joueur non trouvé !"
+            }
+        });
     }
 }

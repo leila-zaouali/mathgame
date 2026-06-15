@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 [System.Serializable]
 public class ProgressResponse
@@ -7,6 +7,8 @@ public class ProgressResponse
     public int level;
     public int score;
     public ProgressData progress;
+    public string inventory; // ✅ AJOUTE ÇA
+
 }
 
 [System.Serializable]
