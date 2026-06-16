@@ -747,6 +747,7 @@ MonoBehaviour:
   interactKey: 101
   inventoryKey: 105
   useKey: 112
+  menuKey: 111
 --- !u!4 &1568346419
 Transform:
   m_ObjectHideFlags: 0

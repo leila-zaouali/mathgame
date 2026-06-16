@@ -1,4 +1,4 @@
-[System.Serializable]
+﻿[System.Serializable]
 public class LoginResponse
 {
     public bool success;
@@ -6,6 +6,8 @@ public class LoginResponse
     public int score;
     public int level;
     public string[] progress;
+    public string message; // ✅ AJOUTE
+
 }
 
 [System.Serializable]

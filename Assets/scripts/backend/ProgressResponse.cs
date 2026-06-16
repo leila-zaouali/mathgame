@@ -8,9 +8,18 @@ public class ProgressResponse
     public int score;
     public ProgressData progress;
     public string inventory; // ✅ AJOUTE ÇA
+    public CheckpointData checkpoint; // ✅ AJOUTE
 
 }
 
+[System.Serializable]
+public class CheckpointData
+{
+    public string scene;
+    public float x;
+    public float y;
+    public float z;
+}
 [System.Serializable]
 public class ProgressData
 {

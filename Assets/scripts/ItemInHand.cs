@@ -10,6 +10,8 @@ public class ItemInHand : MonoBehaviour
 
     void Update()
     {
+        if (GameInput.instance == null) return; // ✅ AJOUTE
+
         if (GameInput.instance.UsePressed())
         {
             // 🔥 PRENDRE OBJET

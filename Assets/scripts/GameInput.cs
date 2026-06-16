@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameInput : MonoBehaviour
 {
@@ -8,6 +8,8 @@ public class GameInput : MonoBehaviour
     public KeyCode interactKey = KeyCode.E;
     public KeyCode inventoryKey = KeyCode.I;
     public KeyCode useKey = KeyCode.P;
+    public KeyCode menuKey = KeyCode.M; // ✅ AJOUTE
+
 
     void Awake()
     {
@@ -25,6 +27,10 @@ public class GameInput : MonoBehaviour
     public bool InteractPressed()
     {
         return Input.GetKeyDown(interactKey);
+    }
+    public bool MenuPressed() // ✅ AJOUTE
+    {
+        return Input.GetKeyDown(menuKey);
     }
 
     public bool InventoryPressed()

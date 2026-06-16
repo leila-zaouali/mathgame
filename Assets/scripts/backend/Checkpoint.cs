@@ -9,19 +9,19 @@ public class Checkpoint : MonoBehaviour
     {
         if (!other.CompareTag("Player")) return;
         if (used) return;
-
         used = true;
 
-        string id = PlayerSession.UserId;
+        string scene = SceneManager.GetActiveScene().name;
+        Vector3 pos = transform.position;
 
-        PlayerPrefs.SetString(id + "_cp_scene", SceneManager.GetActiveScene().name);
-        PlayerPrefs.SetFloat(id + "_cp_x", transform.position.x);
-        PlayerPrefs.SetFloat(id + "_cp_y", transform.position.y);
-        PlayerPrefs.SetFloat(id + "_cp_z", transform.position.z);
-        PlayerPrefs.SetInt(id + "_cp_active", 1);
+        // ✅ Sauvegarder sur Firebase uniquement
+        if (APIManager.instance != null)
+            APIManager.instance.SaveCheckpoint(scene, pos);
 
-        PlayerPrefs.Save();
+        // ✅ Mettre à jour ProgressManager directement
+        if (ProgressManager.instance != null)
+            ProgressManager.instance.SetCheckpoint(scene, pos.x, pos.y, pos.z);
 
-        Debug.Log("📍 CHECKPOINT SAUVEGARDÉ POUR " + id);
+        Debug.Log("📍 CHECKPOINT SAUVEGARDÉ: " + scene);
     }
 }

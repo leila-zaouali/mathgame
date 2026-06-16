@@ -9,6 +9,8 @@ public class APIManager : MonoBehaviour
     private string baseUrl = "http://127.0.0.1:3000";
     public static bool restoreInventory;
     public static string nextScene;
+    public static bool progressLoaded = false; // ✅ NOUVEAU
+
     void Awake()
     {
         if (instance != null && instance != this)
@@ -73,22 +75,18 @@ public class APIManager : MonoBehaviour
 
             if (!data.success)
             {
-                // ❌ Joueur non trouvé
-                callback(false, "Joueur non trouvé !");
+                callback(false, data.message);
                 yield break;
             }
 
-            // ✅ Login OK
             callback(true, "");
 
             PlayerSession.UserId = data.userId;
             Debug.Log("✅ USER ID = " + PlayerSession.UserId);
-            string id = PlayerSession.UserId;
 
-            if (PlayerPrefs.GetInt(id + "_cp_active", 0) == 1)
-                APIManager.nextScene = PlayerPrefs.GetString(id + "_cp_scene");
-            else
-                APIManager.nextScene = "intro1";
+            // ✅ Reset flag avant de charger
+            APIManager.progressLoaded = false;
+            APIManager.nextScene = "intro1";
 
             SceneManager.LoadScene("LoadingScene");
 
@@ -145,12 +143,6 @@ public class APIManager : MonoBehaviour
         UnityWebRequest request = UnityWebRequest.Get(baseUrl + "/ping");
         yield return request.SendWebRequest();
         Debug.Log("PING: " + request.downloadHandler.text);
-    }
-
-    IEnumerator SetScoreNextFrame(int score)
-    {
-        yield return new WaitForSeconds(0.2f);
-        ScoreManager.instance.SetScore(score);
     }
 
     // =====================
@@ -210,13 +202,9 @@ public class APIManager : MonoBehaviour
         yield return request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.Success)
-        {
             Debug.Log("LEVEL UPDATED: " + request.downloadHandler.text);
-        }
         else
-        {
             Debug.Log("ERROR LEVEL UPDATE: " + request.error);
-        }
     }
 
     // =====================
@@ -226,6 +214,7 @@ public class APIManager : MonoBehaviour
     {
         StartCoroutine(GetProgressRequest());
     }
+
     IEnumerator GetProgressRequest()
     {
         string url = baseUrl + "/getProgress/" + PlayerSession.UserId;
@@ -237,8 +226,7 @@ public class APIManager : MonoBehaviour
         {
             Debug.Log("PROGRESS: " + request.downloadHandler.text);
 
-            ProgressResponse data =
-                JsonUtility.FromJson<ProgressResponse>(request.downloadHandler.text);
+            ProgressResponse data = JsonUtility.FromJson<ProgressResponse>(request.downloadHandler.text);
 
             // SCORE
             if (ScoreManager.instance != null)
@@ -257,25 +245,42 @@ public class APIManager : MonoBehaviour
                 ProgressManager.instance.lampPuzzleCompleted = data.progress.lamp_puzzle;
             }
 
-            // ✅ IMPORTANT : juste stocker l’info
             restoreInventory = (data.progress != null && data.progress.game1);
-            // RESTORE INVENTORY FROM SERVER
+
+            // INVENTORY
             if (!string.IsNullOrEmpty(data.inventory))
-            {
                 StartCoroutine(WaitAndRestoreInventory(data.inventory));
+
+            // CHECKPOINT
+            if (data.checkpoint != null && !string.IsNullOrEmpty(data.checkpoint.scene))
+            {
+                if (ProgressManager.instance != null)
+                    ProgressManager.instance.SetCheckpoint(
+                        data.checkpoint.scene,
+                        data.checkpoint.x,
+                        data.checkpoint.y,
+                        data.checkpoint.z
+                    );
+
+                APIManager.nextScene = data.checkpoint.scene;
+                Debug.Log("✅ CHECKPOINT RESTAURÉ: " + data.checkpoint.scene);
             }
+            else
+            {
+                Debug.Log("📍 PAS DE CHECKPOINT → intro1");
+            }
+
+            // ✅ Progress chargé — autoriser le spawn
+            APIManager.progressLoaded = true;
         }
     }
+
     IEnumerator WaitAndRestoreInventory(string inventoryData)
     {
         while (Inventory.instance == null) yield return null;
         Inventory.instance.RestoreInventoryFromServer(inventoryData);
     }
-    IEnumerator WaitInventoryAndRestore()
-    {
-        while (Inventory.instance == null) yield return null;
-        Inventory.instance.SetWaterDropFromSave();
-    }
+
     // =====================
     // SAVE INVENTORY
     // =====================
@@ -303,5 +308,62 @@ public class APIManager : MonoBehaviour
 
         yield return request.SendWebRequest();
         Debug.Log("SAVE INVENTORY: " + request.downloadHandler.text);
+    }
+
+    // =====================
+    // RESET PROGRESS
+    // =====================
+    public void ResetProgress()
+    {
+        StartCoroutine(ResetProgressRequest());
+    }
+
+    IEnumerator ResetProgressRequest()
+    {
+        string url = baseUrl + "/resetProgress";
+        string json = "{\"userId\":\"" + PlayerSession.UserId + "\"}";
+
+        UnityWebRequest request = new UnityWebRequest(url, "POST");
+        byte[] body = System.Text.Encoding.UTF8.GetBytes(json);
+        request.uploadHandler = new UploadHandlerRaw(body);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+        Debug.Log("RESET: " + request.downloadHandler.text);
+    }
+
+    // =====================
+    // SAVE CHECKPOINT
+    // =====================
+    public void SaveCheckpoint(string scene, Vector3 pos)
+    {
+        StartCoroutine(SaveCheckpointRequest(scene, pos));
+    }
+
+    IEnumerator SaveCheckpointRequest(string scene, Vector3 pos)
+    {
+        if (string.IsNullOrEmpty(PlayerSession.UserId)) yield break;
+
+        // ✅ Forcer le point comme séparateur décimal
+        string x = pos.x.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        string y = pos.y.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        string z = pos.z.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+        string url = baseUrl + "/saveCheckpoint";
+        string json = "{\"userId\":\"" + PlayerSession.UserId + "\"," +
+                      "\"scene\":\"" + scene + "\"," +
+                      "\"x\":" + x + "," +
+                      "\"y\":" + y + "," +
+                      "\"z\":" + z + "}";
+
+        UnityWebRequest request = new UnityWebRequest(url, "POST");
+        byte[] body = System.Text.Encoding.UTF8.GetBytes(json);
+        request.uploadHandler = new UploadHandlerRaw(body);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+        Debug.Log("SAVE CHECKPOINT: " + request.downloadHandler.text);
     }
 }

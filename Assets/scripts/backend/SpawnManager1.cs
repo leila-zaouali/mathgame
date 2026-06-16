@@ -4,23 +4,23 @@ using UnityEngine;
 public class SpawnManager1 : MonoBehaviour
 {
     public Transform defaultSpawn;
-
     private static bool spawned = false;
 
-    void OnEnable()
+    void Awake()
     {
+        Debug.Log("SpawnManager INSTANCE = " + gameObject.GetInstanceID());
         spawned = false;
     }
 
     IEnumerator Start()
     {
-        if (spawned)
-            yield break;
-
+        if (spawned) yield break;
         spawned = true;
 
-        GameObject player = null;
+        // ✅ Attendre que GetProgress soit terminé
+        while (!APIManager.progressLoaded) yield return null;
 
+        GameObject player = null;
         while (player == null)
         {
             player = GameObject.FindGameObjectWithTag("Player");
@@ -30,15 +30,12 @@ public class SpawnManager1 : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
 
         Vector3 pos = defaultSpawn.position;
-
-        if (ProgressManager.instance != null &&
-            ProgressManager.instance.hasCheckpoint)
+        if (ProgressManager.instance != null && ProgressManager.instance.hasCheckpoint)
         {
             pos = ProgressManager.instance.checkpointPosition;
         }
 
         player.transform.position = pos;
-
         Rigidbody rb = player.GetComponent<Rigidbody>();
         if (rb != null)
         {
@@ -47,9 +44,5 @@ public class SpawnManager1 : MonoBehaviour
         }
 
         Debug.Log("FINAL SPAWN APPLIED");
-    }
-    void Awake()
-    {
-        Debug.Log("SpawnManager INSTANCE = " + gameObject.GetInstanceID());
     }
 }
