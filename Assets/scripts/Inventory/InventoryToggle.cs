@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class InventoryToggle : MonoBehaviour
 {
@@ -13,20 +13,17 @@ public class InventoryToggle : MonoBehaviour
 
     void Update()
     {
-        
-       
-            if (GameInput.instance.InventoryPressed())
-            {
-                isOpen = !isOpen;
+        if (GameInput.instance == null) return; // ✅ AJOUTE
 
-                inventoryUI.SetActive(isOpen);
-
-                Cursor.visible = isOpen;
-
-                Cursor.lockState = isOpen
-                    ? CursorLockMode.None
-                    : CursorLockMode.Locked;
-            }
+        if (GameInput.instance.InventoryPressed())
+        {
+            isOpen = !isOpen;
+            inventoryUI.SetActive(isOpen);
+            Cursor.visible = isOpen;
+            Cursor.lockState = isOpen
+                ? CursorLockMode.None
+                : CursorLockMode.Locked;
         }
-    
+    }
+
 }

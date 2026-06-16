@@ -33,17 +33,13 @@ public class Inventory : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
 
-        string scene = APIManager.nextScene;
+        // ✅ Attendre que GetProgress soit terminé
+        while (!APIManager.progressLoaded) yield return null;
 
+        string scene = APIManager.nextScene; // ← maintenant nextScene est correct
         UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
-
-        //yield return new WaitForSeconds(0.5f);
-
-        //if (Inventory.instance != null)
-        //{
-        //    Inventory.instance.InitInventory();
-        //}
     }
+
 
 
 
