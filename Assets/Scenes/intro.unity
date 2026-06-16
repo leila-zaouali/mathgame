@@ -1832,7 +1832,7 @@ GameObject:
   - component: {fileID: 249432286}
   - component: {fileID: 249432285}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: Canvas pausemenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19722,7 +19722,7 @@ GameObject:
   - component: {fileID: 1496974121}
   - component: {fileID: 1496974125}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: Canvas score
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

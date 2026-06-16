@@ -78,27 +78,27 @@ public class Lampe : MonoBehaviour
             Mathf.Approximately(currentBattery.voltage, requiredVoltage);
 
         bool shouldBeOn = hasEnergy && switchOn;
-
         lampLight.enabled = shouldBeOn;
 
-        // ⭐ SCORE + PROGRESSION (OK)
         if (shouldBeOn && !scoreGiven)
         {
             scoreGiven = true;
-
             if (ScoreManager.instance != null)
                 ScoreManager.instance.AddScore(50);
-
-
             Debug.Log("💡 Lampe ON");
         }
 
-        if (!shouldBeOn)
-        {
-            scoreGiven = false;
-        }
+        // ❌ SUPPRIME CES LIGNES
+        // if (!shouldBeOn)
+        // {
+        //     scoreGiven = false;
+        // }
     }
-
+    public void TurnOnSilent()
+    {
+        scoreGiven = true; // bloquer le score
+        SetSwitch(true);
+    }
     public void TurnOn()
     {
         SetSwitch(true);
