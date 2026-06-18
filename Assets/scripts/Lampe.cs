@@ -68,18 +68,18 @@ public class Lampe : MonoBehaviour
     {
         return lampLight != null && lampLight.enabled;
     }
-
     void UpdateLight()
     {
         if (lampLight == null) return;
-
         bool hasEnergy =
             currentBattery != null &&
             Mathf.Approximately(currentBattery.voltage, requiredVoltage);
-
         bool shouldBeOn = hasEnergy && switchOn;
-        lampLight.enabled = shouldBeOn;
 
+        // ✅ AJOUTE
+        Debug.Log("💡 UpdateLight: hasEnergy=" + hasEnergy + " switchOn=" + switchOn + " shouldBeOn=" + shouldBeOn);
+
+        lampLight.enabled = shouldBeOn;
         if (shouldBeOn && !scoreGiven)
         {
             scoreGiven = true;
@@ -87,12 +87,6 @@ public class Lampe : MonoBehaviour
                 ScoreManager.instance.AddScore(50);
             Debug.Log("💡 Lampe ON");
         }
-
-        // ❌ SUPPRIME CES LIGNES
-        // if (!shouldBeOn)
-        // {
-        //     scoreGiven = false;
-        // }
     }
     public void TurnOnSilent()
     {
