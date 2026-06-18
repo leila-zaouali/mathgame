@@ -25,7 +25,7 @@ public class ItemInHand : MonoBehaviour
                 currentItem = item;
 
                 // 🔦 TORCHE → TÊTE
-                if (item.itemName == "Torch")
+                if (item.itemName == "torche")
                 {
                     currentObject = Instantiate(
                         item.prefab,
