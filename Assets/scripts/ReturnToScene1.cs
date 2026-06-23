@@ -9,31 +9,38 @@ public class ReturnToScene1 : MonoBehaviour
     private bool hasLoaded = false;
     private bool alreadyProcessed = false;
 
-   void Update()
-{
-    if (alreadyProcessed) return;
-    if (Inventory.instance == null) return;
-
-    if (Inventory.instance.totalH2OCollected >= requiredH2O)
+    void Update()
     {
-        alreadyProcessed = true;
+        if (alreadyProcessed) return;
+        if (Inventory.instance == null) return;
 
-        Debug.Log("✔ Game1 terminé");
-
-        // BONUS UNE SEULE FOIS
-        if (ScoreManager.instance != null)
-            ScoreManager.instance.AddLevelBonus();
-
-        if (APIManager.instance != null)
+        if (Inventory.instance.totalH2OCollected >= requiredH2O)
         {
-            APIManager.instance.SaveProgress("game1", true);
-            APIManager.instance.UpdateLevel();
-        }
+            alreadyProcessed = true;
+            Debug.Log("✔ Game1 termine");
 
-        Inventory.instance.totalH2OCollected = 0;
-          
-        GameState.returnFromGame1 = true;
-        SceneManager.LoadScene(sceneName);
+            // ✅ FIX : on met a jour la progression LOCALE immediatement,
+            // sans attendre un rechargement de scene / un nouveau GetProgress().
+            if (ProgressManager.instance != null)
+            {
+                ProgressManager.instance.game1Completed = true;
+                Debug.Log("✅ ProgressManager.game1Completed = true (local, immediat)");
+            }
+
+            // BONUS UNE SEULE FOIS
+            if (ScoreManager.instance != null)
+                ScoreManager.instance.AddLevelBonus();
+
+            if (APIManager.instance != null)
+            {
+                APIManager.instance.SaveProgress("game1", true);
+                APIManager.instance.UpdateLevel();
+            }
+
+            Inventory.instance.totalH2OCollected = 0;
+
+            GameState.returnFromGame1 = true;
+            SceneManager.LoadScene(sceneName);
+        }
     }
-}
 }
