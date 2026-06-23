@@ -6,22 +6,39 @@ public class Scenegame1 : MonoBehaviour
 {
     public string sceneName = "Scene2";
 
-    [Header("Paramètres du Rétrécissement")]
+    [Header("Parametres du Retrecissement")]
     public float dureeRetrecissement = 2.0f;
     public Vector3 tailleAtome = new Vector3(0.05f, 0.05f, 0.05f);
 
-    [Header("Paramètres Audio")]
-    public AudioSource audioSource; // L'appareil qui joue le son
-    public AudioClip sonRetrecissement; // Le fichier audio (.mp3 / .wav)
+    [Header("Parametres Audio")]
+    public AudioSource audioSource;
+    public AudioClip sonRetrecissement;
 
     private bool aEteTouche = false;
 
     void Start()
     {
+        StartCoroutine(CheckIfAlreadyCompleted());
+    }
+
+    IEnumerator CheckIfAlreadyCompleted()
+    {
+        // ✅ On attend que le flag global de chargement de progression soit pret.
+        // Tant que APIManager.progressLoaded est false, on ne sait pas encore
+        // si le puzzle a deja ete complete ou non -> on patiente.
+        while (!APIManager.progressLoaded)
+        {
+            yield return null;
+        }
+
         if (ProgressManager.instance != null && ProgressManager.instance.game1Completed)
         {
-            Debug.Log("💧 Game1 déjà terminé");
+            Debug.Log("💧 Game1 deja termine -> cube desactive");
             gameObject.SetActive(false);
+        }
+        else
+        {
+            Debug.Log("⚛ Game1 pas encore termine -> cube actif");
         }
     }
 
@@ -36,9 +53,8 @@ public class Scenegame1 : MonoBehaviour
 
     IEnumerator SequenceRetrecissementEtChargement(GameObject joueur)
     {
-        Debug.Log("⚛ Entrée dans le monde des atomes : Rétrécissement en cours...");
+        Debug.Log("⚛ Entree dans le monde des atomes : Retrecissement en cours...");
 
-        // 🔊 Déclenche le son dès que le joueur touche le cube
         if (audioSource != null && sonRetrecissement != null)
         {
             audioSource.PlayOneShot(sonRetrecissement);
@@ -51,14 +67,12 @@ public class Scenegame1 : MonoBehaviour
         {
             tempsEcoule += Time.deltaTime;
             float progression = tempsEcoule / dureeRetrecissement;
-
             joueur.transform.localScale = Vector3.Lerp(tailleInitiale, tailleAtome, progression);
             yield return null;
         }
 
         joueur.transform.localScale = tailleAtome;
-
-        Debug.Log("➡ Changement de scène vers " + sceneName);
+        Debug.Log("➡ Changement de scene vers " + sceneName);
         SceneManager.LoadScene(sceneName);
     }
 }

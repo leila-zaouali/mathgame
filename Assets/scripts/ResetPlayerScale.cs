@@ -22,9 +22,9 @@ public class ResetPlayerScale : MonoBehaviour
 
         if (joueur != null)
         {
-            // Force la remise à la taille normale (1, 1, 1)
-            joueur.transform.localScale = Vector3.one;
-            Debug.Log("📏 Taille du joueur réinitialisée avec succès dans la scène : " + scene.name);
+            // Applique la taille par défaut spécifique (1, 1.904, 1)
+            joueur.transform.localScale = new Vector3(1f, 1.904f, 1f);
+            Debug.Log("📏 Taille du joueur réinitialisée à (1, 1.904, 1) dans : " + scene.name);
         }
     }
 }

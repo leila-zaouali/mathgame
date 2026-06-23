@@ -6,8 +6,11 @@ public class SceneChanger : MonoBehaviour
 {
     public string sceneToLoad;
     public Animator doorAnimator;
-    public AudioSource doorAudioSource; // ✅ AJOUTE
-    public AudioClip doorOpenSound;     // ✅ AJOUTE
+    public AudioSource doorAudioSource;
+    public AudioClip doorOpenSound;
+
+    [Tooltip("Nom exact de l'etat d'animation declenche par le trigger 'Open' (visible dans l'Animator Controller)")]
+    public string doorOpenStateName = "Open";
 
     private bool isChanging = false;
 
@@ -22,14 +25,26 @@ public class SceneChanger : MonoBehaviour
 
     IEnumerator OpenDoorAndLoad()
     {
+        float waitTime = 1f; // valeur de secours si jamais l'animator est absent
+
         if (doorAnimator != null)
+        {
             doorAnimator.SetTrigger("Open");
 
-        // ✅ Jouer le son
+            // On attend une frame pour laisser l'Animator passer dans le nouvel etat
+            yield return null;
+
+            // Recupere la duree reelle du clip d'animation en cours
+            AnimatorStateInfo stateInfo = doorAnimator.GetCurrentAnimatorStateInfo(0);
+            waitTime = stateInfo.length;
+        }
+
+        // Joue le son d'ouverture
         if (doorAudioSource != null && doorOpenSound != null)
             doorAudioSource.PlayOneShot(doorOpenSound);
 
-        yield return new WaitForSeconds(1f);
+        // Attend la fin reelle de l'animation avant de charger la scene
+        yield return new WaitForSeconds(waitTime);
 
         SceneManager.LoadScene(sceneToLoad);
     }
