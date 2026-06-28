@@ -10620,7 +10620,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d81023cf7c25c8947be88348c0627a2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeLimit: 20
+  timeLimit: 120
   autoStart: 1
   checkIfAlreadyCompleted: 1
   timerText: {fileID: 518914137}
@@ -16555,10 +16555,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 238309486}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 0, y: 54.45625}
+  m_SizeDelta: {x: 629.5618, y: 108.9125}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &904988679
 GameObject:
@@ -18057,14 +18057,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.2905661, g: 0.2889214, b: 0.2889214, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 0828bdae3ee7db242b3a211ad6b5c48e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: af2a37ca27f836240bc770860a4b388b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -18090,7 +18090,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1139827553}
   m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
-  m_LocalPosition: {x: 0, y: 0, z: 0.04}
+  m_LocalPosition: {x: 0, y: 0, z: 0.2484}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -18098,8 +18098,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 90, y: 90, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.4644, y: 0.11}
-  m_SizeDelta: {x: 1.6398, y: 1.7017}
+  m_AnchoredPosition: {x: 0.6312, y: 0.11}
+  m_SizeDelta: {x: 2.0566, y: 1.3682}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &1147186214
 PrefabInstance:
@@ -20492,6 +20492,60 @@ Transform:
   - {fileID: 730172201}
   - {fileID: 665386934}
   m_Father: {fileID: 1579953472}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1495852763
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1495852765}
+  - component: {fileID: 1495852764}
+  m_Layer: 0
+  m_Name: lampe manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1495852764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1495852763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 336329e55689c874bbff73963a27d122, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lamp1: {fileID: 2761556629307017105}
+  lamp2: {fileID: 973278078}
+  lamp3: {fileID: 1908210467}
+  wallImage: {fileID: 1139827553}
+  battery1: {fileID: 5216315687534295137}
+  battery2: {fileID: 5216315687534295136}
+  battery3: {fileID: 5216315687534295135}
+  switch1: {fileID: 437576417}
+  switch2: {fileID: 1368168870}
+  switch3: {fileID: 1775102866}
+--- !u!4 &1495852765
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1495852763}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.77839994, y: 4.2011995, z: -0.44}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1499944990
 GameObject:
@@ -29781,3 +29835,4 @@ SceneRoots:
   - {fileID: 252824273}
   - {fileID: 556711659}
   - {fileID: 1602638726}
+  - {fileID: 1495852765}

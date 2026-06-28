@@ -21,11 +21,11 @@ public class PositionMessageManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI texteMeshPro;
     [SerializeField] private float dureeAffichage = 3.0f;
 
-    [Header("Référence Joueur (Peut être vide au départ)")]
-    [SerializeField] private Transform joueurTransform;
-
     [Header("Liste des Zones de Texte")]
     [SerializeField] private List<ZoneMessage> listeDesZones;
+
+    // Plus de référence assignable dans l'Inspector : uniquement via le Tag "Player"
+    private Transform joueurTransform;
 
     private Coroutine coroutineActuelle;
 
@@ -49,25 +49,23 @@ public class PositionMessageManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // Dès qu'une nouvelle scène se charge, on recherche le joueur DontDestroyOnLoad
+        // Dès qu'une nouvelle scène se charge, on recherche le joueur via son Tag
         TrouverLeJoueur();
     }
 
     private void TrouverLeJoueur()
     {
-        // Si la case est vide ou que l'ancien joueur de test a été détruit par le chargement de scène
-        if (joueurTransform == null)
+        // Toujours re-chercher via le Tag, qu'il y ait déjà une référence ou non
+        GameObject joueurTrouve = GameObject.FindWithTag("Player");
+        if (joueurTrouve != null)
         {
-            GameObject joueurTrouve = GameObject.FindWithTag("Player");
-            if (joueurTrouve != null)
-            {
-                joueurTransform = joueurTrouve.transform;
-                Debug.Log($"[Manager] Joueur trouvé avec succès : {joueurTrouve.name}");
-            }
-            else
-            {
-                Debug.LogWarning("[Manager] Aucun objet avec le Tag 'Player' trouvé dans cette scène !");
-            }
+            joueurTransform = joueurTrouve.transform;
+            Debug.Log($"[Manager] Joueur trouvé avec succès : {joueurTrouve.name}");
+        }
+        else
+        {
+            joueurTransform = null;
+            Debug.LogWarning("[Manager] Aucun objet avec le Tag 'Player' trouvé dans cette scène !");
         }
     }
 
@@ -80,7 +78,6 @@ public class PositionMessageManager : MonoBehaviour
             if (!zone.aEteDeclenche)
             {
                 float distance = Vector3.Distance(joueurTransform.position, zone.centrePosition);
-
                 if (distance <= zone.rayonDetection)
                 {
                     TriggerMessage(zone);
