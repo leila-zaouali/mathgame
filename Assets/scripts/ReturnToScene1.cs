@@ -6,7 +6,7 @@ public class ReturnToScene1 : MonoBehaviour
     public int requiredH2O = 3;
     public string sceneName = "intro";
 
-    private bool hasLoaded = false;
+    //private bool hasLoaded = false;
     private bool alreadyProcessed = false;
 
     void Update()
